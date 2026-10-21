@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Clínico de Cáncer de Mama — MP Neurona</title>
+    <style>
+        :root {
+            --bg-main: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #0f4c81;
+            --primary-hover: #0a355c;
+            --accent: #0284c7;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --benigno-bg: #ecfdf5;
+            --benigno-border: #10b981;
+            --benigno-text: #065f46;
+            --maligno-bg: #fef2f2;
+            --maligno-border: #ef4444;
+            --maligno-text: #991b1b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f1f5f9 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 32px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 920px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(15, 76, 129, 0.08);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        /* Encabezado */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+            color: #ffffff;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h1 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            font-size: 0.88rem;
+            color: #bae6fd;
+        }
+
+        .badge-model {
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Cuerpo principal */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 28px;
+            padding: 28px 32px;
+        }
+
+        @media (max-width: 780px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Barra de casos rápidos */
+        .presets-bar {
+            margin-bottom: 20px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .presets-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-preset {
+            flex: 1;
+            min-width: 115px;
+            padding: 7px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-main);
+            transition: all 0.18s ease;
+        }
+
+        .btn-preset:hover {
+            border-color: var(--accent);
+            background: #f0f9ff;
+            color: var(--primary);
+        }
+
+        .btn-preset.danger:hover {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .btn-preset.success:hover {
+            border-color: #10b981;
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        /* Formulario */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .range-hint {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #ffffff;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .btn-submit {
+            margin-top: 18px;
+            width: 100%;
+            padding: 13px 20px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.98rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        .btn-submit:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Panel lateral de resultados */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .info-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .info-card h3 {
+            font-size: 0.92rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .info-card p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Tarjeta de Resultado */
+        #resultadoCard {
+            display: none;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.25s ease;
+        }
+
+        #resultadoCard.benigno {
+            background-color: var(--benigno-bg);
+            border: 1.5px solid var(--benigno-border);
+            color: var(--benigno-text);
+        }
+
+        #resultadoCard.maligno {
+            background-color: var(--maligno-bg);
+            border: 1.5px solid var(--maligno-border);
+            color: var(--maligno-text);
+        }
+
+        .res-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            background: rgba(0, 0, 0, 0.07);
+        }
+
+        .res-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .res-formula {
+            font-size: 0.83rem;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Desglose de variables binarizadas */
+        .breakdown-list {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .pill-bin {
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+        }
+
+        .pill-1 {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .pill-0 {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <header class="header">
+        <div class="header-title">
+            <h1>Análisis Clínico de Cáncer de Mama</h1>
+            <p>Clasificación binaria mediante Neurona de McCulloch-Pitts (Dataset UCI Wisconsin)</p>
+        </div>
+        <div class="badge-model" id="modelBadge">MP Neurona • 5 Variables Clave</div>
+    </header>
+
+    <div class="content-grid">
+        <!-- Columna Izquierda: Formulario -->
+        <div>
+            <div class="presets-bar">
+                <span class="presets-title">Autocompletar con casos reales del dataset:</span>
+                <div class="preset-buttons">
+                    <button type="button" class="btn-preset success" onclick="cargarCaso('benigno')">
+                        Caso Benigno Real
+                    </button>
+                    <button type="button" class="btn-preset danger" onclick="cargarCaso('maligno')">
+                        Caso Maligno Real
+                    </button>
+                    <button type="button" class="btn-preset" onclick="limpiarFormulario()">
+                        Limpiar Campos
+                    </button>
+                </div>
+            </div>
+
+            <form id="predictForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="radius">Radio Medio (mean radius)</label>
+                        <span class="range-hint">Rango: 6.98 – 28.11 (Corte: ~17.55)</span>
+                        <input type="number" step="any" min="0.0001" id="radius" required placeholder="Ej: 17.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="texture">Textura Media (mean texture)</label>
+                        <span class="range-hint">Rango: 9.71 – 39.28 (Corte: ~24.50)</span>
+                        <input type="number" step="any" min="0.0001" id="texture" required placeholder="Ej: 10.38">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="perimeter">Perímetro Medio (mean perimeter)</label>
+                        <span class="range-hint">Rango: 43.79 – 188.50 (Corte: ~116.15)</span>
+                        <input type="number" step="any" min="0.0001" id="perimeter" required placeholder="Ej: 122.80">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="area">Área Media (mean area)</label>
+                        <span class="range-hint">Rango: 143.50 – 2501.0 (Corte: ~1322.25)</span>
+                        <input type="number" step="any" min="0.0001" id="area" required placeholder="Ej: 1001.0">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="smoothness">Suavidad Media (mean smoothness)</label>
+                        <span class="range-hint">Rango: 0.0526 – 0.1634 (Corte: ~0.1080)</span>
+                        <input type="number" step="any" min="0.0001" id="smoothness" required placeholder="Ej: 0.1184">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnSubmit">Predecir Diagnóstico</button>
+            </form>
+        </div>
+
+        <!-- Columna Derecha: Resultado y Explicación de la MP Neurona -->
+        <div class="side-panel">
+            <div id="resultadoCard">
+                <span class="res-badge" id="resBadge">Resultado del Modelo</span>
+                <div class="res-title" id="resTexto"></div>
+                <div class="res-formula" id="resFormula" style="display: none;"></div>
+                <div class="breakdown-list" id="resDetalles"></div>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Cómo evalúa la Neurona MP?</h3>
+                <p>
+                    1. <strong>Binarización:</strong> Cada característica continua se compara con el punto medio de entrenamiento (<code>pd.cut</code>). Si el valor es menor o igual al punto de corte recibe <strong>1</strong> (rango normal); si lo supera recibe <strong>0</strong> (valor elevado).<br><br>
+                    2. <strong>Activación ($z \ge \theta$):</strong> La neurona suma las entradas binarias ($z = \sum x_i$). Si la suma alcanza el umbral óptimo ($\theta$), clasifica como <strong>Benigno (1)</strong>; de lo contrario, alerta <strong>Maligno (0)</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://127.0.0.1:5000';
+
+    // Casos reales extraídos del dataset UCI Breast Cancer Wisconsin
+    const CASOS_REALES = {
+        benigno: {
+            radius: 12.46,
+            texture: 15.70,
+            perimeter: 82.57,
+            area: 477.1,
+            smoothness: 0.09779
+        },
+        maligno: {
+            radius: 17.99,
+            texture: 10.38,
+            perimeter: 122.80,
+            area: 1001.0,
+            smoothness: 0.1184
+        }
+    };
+
+    function cargarCaso(tipo) {
+        const caso = CASOS_REALES[tipo];
+        if (!caso) return;
+        document.getElementById('radius').value = caso.radius;
+        document.getElementById('texture').value = caso.texture;
+        document.getElementById('perimeter').value = caso.perimeter;
+        document.getElementById('area').value = caso.area;
+        document.getElementById('smoothness').value = caso.smoothness;
+    }
+
+    function limpiarFormulario() {
+        document.getElementById('predictForm').reset();
+        document.getElementById('resultadoCard').style.display = 'none';
+    }
+
+    document.getElementById('predictForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const btnSubmit = document.getElementById('btnSubmit');
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = 'Procesando en la API...';
+
+        const payload = {
+            radius: document.getElementById('radius').value,
+            texture: document.getElementById('texture').value,
+            perimeter: document.getElementById('perimeter').value,
+            area: document.getElementById('area').value,
+            smoothness: document.getElementById('smoothness').value
+        };
+
+        fetch(`${API_URL}/predict`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const card = document.getElementById('resultadoCard');
+            const texto = document.getElementById('resTexto');
+            const formula = document.getElementById('resFormula');
+            const detalles = document.getElementById('resDetalles');
+            const badge = document.getElementById('resBadge');
+
+            card.style.display = 'block';
+            detalles.innerHTML = '';
+
+            if (data.status === 'success') {
+                const esMaligno = data.prediccion.includes('Maligno');
+                card.className = esMaligno ? 'maligno' : 'benigno';
+                badge.innerText = esMaligno ? 'Alerta Clínica (Clase 0)' : 'Dentro de Parámetros (Clase 1)';
+                texto.innerText = data.prediccion;
+
+                // Si la API mejorada envía suma_z y threshold, los mostramos
+                if (data.suma_z !== undefined && data.threshold !== undefined) {
+                    formula.style.display = 'block';
+                    const simbolo = data.suma_z >= data.threshold ? '≥' : '<';
+                    formula.innerText = `Suma Neurona (z = ${data.suma_z}) ${simbolo} Threshold óptimo (θ = ${data.threshold})`;
+                } else {
+                    formula.style.display = 'none';
+                }
+
+                // Si la API mejorada envía el desglose por variable, lo renderizamos
+                if (Array.isArray(data.detalles)) {
+                    data.detalles.forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = 'breakdown-item';
+                        const pillClass = item.binario === 1 ? 'pill-bin pill-1' : 'pill-bin pill-0';
+                        row.innerHTML = `
+                            <span><strong>${item.nombre}:</strong> ${item.valor_ingresado} (corte: ${item.punto_corte})</span>
+                            <span class="${pillClass}">x = ${item.binario}</span>
+                        `;
+                        detalles.appendChild(row);
+                    });
+                }
+            } else {
+                card.className = 'maligno';
+                badge.innerText = 'Error de Validación';
+                texto.innerText = data.error || 'Ocurrió un error al procesar la solicitud.';
+                formula.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const card = document.getElementById('resultadoCard');
+            card.style.display = 'block';
+            card.className = 'maligno';
+            document.getElementById('resBadge').innerText = 'Sin Conexión';
+            document.getElementById('resTexto').innerText = 'No se pudo conectar con http://127.0.0.1:5000. Verifica que app.py esté ejecutándose en Anaconda.';
+            document.getElementById('resFormula').style.display = 'none';
+            document.getElementById('resDetalles').innerHTML = '';
+        })
+        .finally(() => {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = 'Predecir Diagnóstico';
+        });
+    });
+</script>
+
+</body>
+</html>

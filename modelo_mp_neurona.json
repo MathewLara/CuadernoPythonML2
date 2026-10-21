@@ -1,0 +1,56 @@
+{
+  "proyecto": "prediccion_cancer_mama_mp_neurona",
+  "version": "1.0.0",
+  "modelo": "MpNeurona (McCulloch-Pitts)",
+  "dataset": "UCI ML Breast Cancer Wisconsin (Diagnostic)",
+  "clases": {
+    "0": "Maligno (Posible enfermedad detectada)",
+    "1": "Benigno (Sano)"
+  },
+  "total_registros_dataset": 569,
+  "particion": {
+    "entrenamiento": 426,
+    "prueba": 143,
+    "proporcion_test": 0.25,
+    "semilla": 42
+  },
+  "top_features": [
+    "mean radius",
+    "mean texture",
+    "mean perimeter",
+    "mean area",
+    "mean smoothness"
+  ],
+  "threshold_optimo_5_vars": 4,
+  "threshold_optimo_30_vars": 28,
+  "exactitud_prueba_30_vars": 0.8112,
+  "regla_binarizacion": "1 si valor <= midpoint (rango normal/bajo), 0 si valor > midpoint (rango elevado)",
+  "regla_decision": "Clase 1 (Benigno) si suma(x_bin) >= threshold_optimo_5_vars; Clase 0 (Maligno) en caso contrario",
+  "parametros_binarizacion": {
+    "mean radius": {
+      "min": 6.981,
+      "max": 28.11,
+      "midpoint": 17.5455
+    },
+    "mean texture": {
+      "min": 9.71,
+      "max": 39.28,
+      "midpoint": 24.495
+    },
+    "mean perimeter": {
+      "min": 43.79,
+      "max": 188.5,
+      "midpoint": 116.145
+    },
+    "mean area": {
+      "min": 143.5,
+      "max": 2501.0,
+      "midpoint": 1322.25
+    },
+    "mean smoothness": {
+      "min": 0.05263,
+      "max": 0.1634,
+      "midpoint": 0.108015
+    }
+  }
+}
